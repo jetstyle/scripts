@@ -33,6 +33,10 @@ echo $cmd
 
 `$cmd`
 
+echo "====pwd:"
+echo `pwd`
+cd "$SRC"
+
 # extract externals
 CORE=`svn pg svn:externals ${SVN_URL}/trunk | grep core`
 
@@ -55,8 +59,6 @@ if [ $BRANCHES ]; then
     cp -Rf .git/refs/remotes/* .git/refs/heads/
     rm -Rf .git/refs/remotes
 fi
-
-cd $SRC
 
 # TODO: get tags from svn pg svn:externals .
 if [ $CORE_TAG ]; then

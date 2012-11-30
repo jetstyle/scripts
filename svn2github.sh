@@ -13,12 +13,17 @@ fi
 SVN_URL=svn://svn.$GIT_ACCOUNT.ru/$SRC
 
 # detect branches and tags
+
+TRUNK=`svn ls $SVN_URL | grep trunk | tr -d "/"`
 BRANCHES=`svn ls $SVN_URL | grep branch | tr -d "/"`
 #echo svn ls $SVN_URL | grep branch | tr -d "/"
 TAGS=`svn ls $SVN_URL | grep tag | tr -d "/"`
 
 # checkout cmd
-cmd="git svn clone $SVN_URL -T trunk"
+cmd="git svn clone $SVN_URL"
+if [ $TRUNK ]; then
+   cmd="${cmd} -T trunk"
+fi
 
 if [ $BRANCHES ]; then
    cmd="${cmd} -b $BRANCHES"
@@ -38,15 +43,14 @@ echo `pwd`
 cd "$SRC"
 
 # extract externals
-CORE=`svn pg svn:externals ${SVN_URL}/trunk | grep core`
-
-CORE_PATH=`echo $CORE | cut -d " " -f1 `
-
-CORE_TAG=`echo $CORE | cut -d " " -f2 | cut -d "/" -f5 `
-CORE_TAG="${CORE_TAG}/"`echo $CORE | cut -d " " -f2 | cut -d "/" -f6 `
+if [ $TRUNK ]; then
+  CORE=`svn pg svn:externals ${SVN_URL}/trunk | grep core`
+  CORE_PATH=`echo $CORE | cut -d " " -f1 `
+  CORE_TAG=`echo $CORE | cut -d " " -f2 | cut -d "/" -f5 `
+  CORE_TAG="${CORE_TAG}/"`echo $CORE | cut -d " " -f2 | cut -d "/" -f6 `
+fi
 
 echo $CORE_TAG
-#exit
 
 # tags be tags
 if [ $TAGS ]; then 
